@@ -2207,6 +2207,36 @@ html.dark #specs-modal-content * {
             </div>
 
             <div>
+              <label for="form-phone" class="block text-xs font-mono-clean text-slate-600 mb-1">Teléfono de Contacto (WhatsApp / Celular) *</label>
+              <div class="flex gap-2">
+                <select id="form-country-code" class="clean-input px-3 py-2.5 text-sm text-slate-800 bg-white border border-slate-200 rounded-lg max-w-[150px] flex-shrink-0 font-mono-clean">
+                  <option value="+52" selected>🇲🇽 +52 (México)</option>
+                  <option value="+1">🇺🇸/🇨🇦 +1 (USA/Can)</option>
+                  <option value="+34">🇪🇸 +34 (España)</option>
+                  <option value="+57">🇨🇴 +57 (Colombia)</option>
+                  <option value="+54">🇦🇷 +54 (Argentina)</option>
+                  <option value="+56">🇨🇱 +56 (Chile)</option>
+                  <option value="+51">🇵🇪 +51 (Perú)</option>
+                  <option value="+593">🇪🇨 +593 (Ecuador)</option>
+                  <option value="+502">🇬🇹 +502 (Guatemala)</option>
+                  <option value="+506">🇨🇷 +506 (Costa Rica)</option>
+                  <option value="+507">🇵🇦 +507 (Panamá)</option>
+                  <option value="+58">🇻🇪 +58 (Venezuela)</option>
+                  <option value="+591">🇧🇴 +591 (Bolivia)</option>
+                  <option value="+598">🇺🇾 +598 (Uruguay)</option>
+                  <option value="+595">🇵🇾 +595 (Paraguay)</option>
+                  <option value="+503">🇸🇻 +503 (El Salvador)</option>
+                  <option value="+504">🇭🇳 +504 (Honduras)</option>
+                  <option value="+505">🇳🇮 +505 (Nicaragua)</option>
+                  <option value="+44">🇬🇧 +44 (UK)</option>
+                  <option value="+49">🇩🇪 +49 (Alemania)</option>
+                  <option value="+33">🇫🇷 +33 (Francia)</option>
+                </select>
+                <input type="tel" id="form-phone" required placeholder="55 1234 5678" pattern="[0-9\s\-]{7,15}" class="clean-input flex-grow px-4 py-2.5 text-sm font-mono-clean">
+              </div>
+            </div>
+
+            <div>
               <label for="form-division" class="block text-xs font-mono-clean text-slate-600 mb-1">División de Interés *</label>
               <select id="form-division" class="clean-input w-full px-4 py-2.5 text-sm text-slate-800">
                 <option value="Automatización de IA para Redes Sociales (Facebook, Instagram y TikTok)">Automatización de IA para Redes Sociales (Facebook, Instagram y TikTok)</option>
@@ -2817,13 +2847,16 @@ async function handleContactSubmit(e) {
   e.preventDefault();
   const name = document.getElementById('form-name').value.trim();
   const org = document.getElementById('form-org').value.trim();
+  const countryCode = document.getElementById('form-country-code') ? document.getElementById('form-country-code').value : '+52';
+  const phone = document.getElementById('form-phone') ? document.getElementById('form-phone').value.trim() : '';
+  const fullPhone = phone ? `${countryCode} ${phone}` : 'No proporcionado';
   const division = document.getElementById('form-division').value;
   const message = document.getElementById('form-message').value.trim();
   const submitBtn = document.getElementById('form-submit-btn');
   const alertBox = document.getElementById('form-success-alert');
 
-  if (!name || !message) {
-    showToast('Por favor completa todos los campos requeridos.');
+  if (!name || !message || !phone) {
+    showToast('Por favor completa todos los campos requeridos incluyendo tu teléfono.');
     return;
   }
 
@@ -2831,7 +2864,7 @@ async function handleContactSubmit(e) {
   submitBtn.innerText = 'Transmitiendo mensaje a Dirección...';
 
   const subject = `[Neural Media House - ${division}] Contacto de ${name} (${org || 'General'})`;
-  const body = `Estimada Dirección General de Neural Media House,\n\nSe ha generado una nueva solicitud ejecutiva de contacto:\n\n• Nombre Completo: ${name}\n• Empresa / Institución: ${org || 'No especificada'}\n• División de Interés: ${division}\n\n• Mensaje / Requerimiento:\n${message}\n\n---\nTransmisión corporativa directa desde Santa Fe, CDMX.`;
+  const body = `Estimada Dirección General de Neural Media House,\n\nSe ha generado una nueva solicitud ejecutiva de contacto:\n\n• Nombre Completo: ${name}\n• Empresa / Institución: ${org || 'No especificada'}\n• Teléfono de Contacto: ${fullPhone}\n• División de Interés: ${division}\n\n• Mensaje / Requerimiento:\n${message}\n\n---\nTransmisión corporativa directa desde Santa Fe, CDMX.`;
 
   const mailtoUrl = `mailto:cerkvega@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
@@ -2847,6 +2880,7 @@ async function handleContactSubmit(e) {
         _subject: subject,
         nombre: name,
         empresa_institucion: org || 'No especificada',
+        telefono: fullPhone,
         division_interes: division,
         mensaje: message
       })
@@ -2871,7 +2905,7 @@ async function handleContactSubmit(e) {
         <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-sm">
           <strong>Mensaje Preparado y Transmitido a cerkvega@gmail.com</strong><br>
           Estimado(a) <strong>${name}</strong> (${org || 'Sector Corporativo'}), se ha canalizado tu requerimiento para la división <strong>${division}</strong> hacia la Dirección General.<br>
-          <span class="text-xs text-emerald-700 font-mono-clean mt-1 block">Folio de seguimiento: ${folio} · Destinatario: cerkvega@gmail.com</span>
+          <span class="text-xs text-emerald-700 font-mono-clean mt-1 block">Teléfono registrado: ${fullPhone} · Folio de seguimiento: ${folio}</span>
         </div>
       `;
       alertBox.classList.remove('hidden');

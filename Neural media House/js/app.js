@@ -161,13 +161,16 @@ async function handleContactSubmit(e) {
   e.preventDefault();
   const name = document.getElementById('form-name').value.trim();
   const org = document.getElementById('form-org').value.trim();
+  const countryCode = document.getElementById('form-country-code') ? document.getElementById('form-country-code').value : '+52';
+  const phone = document.getElementById('form-phone') ? document.getElementById('form-phone').value.trim() : '';
+  const fullPhone = phone ? `${countryCode} ${phone}` : 'No proporcionado';
   const division = document.getElementById('form-division').value;
   const message = document.getElementById('form-message').value.trim();
   const submitBtn = document.getElementById('form-submit-btn');
   const alertBox = document.getElementById('form-success-alert');
 
-  if (!name || !message) {
-    showToast('Por favor completa todos los campos requeridos.');
+  if (!name || !message || !phone) {
+    showToast('Por favor completa todos los campos requeridos incluyendo tu teléfono.');
     return;
   }
 
@@ -175,7 +178,7 @@ async function handleContactSubmit(e) {
   submitBtn.innerText = 'Transmitiendo mensaje a Dirección...';
 
   const subject = `[Neural Media House - ${division}] Contacto de ${name} (${org || 'General'})`;
-  const body = `Estimada Dirección General de Neural Media House,\n\nSe ha generado una nueva solicitud ejecutiva de contacto:\n\n• Nombre Completo: ${name}\n• Empresa / Institución: ${org || 'No especificada'}\n• División de Interés: ${division}\n\n• Mensaje / Requerimiento:\n${message}\n\n---\nTransmisión corporativa directa desde Santa Fe, CDMX.`;
+  const body = `Estimada Dirección General de Neural Media House,\n\nSe ha generado una nueva solicitud ejecutiva de contacto:\n\n• Nombre Completo: ${name}\n• Empresa / Institución: ${org || 'No especificada'}\n• Teléfono de Contacto: ${fullPhone}\n• División de Interés: ${division}\n\n• Mensaje / Requerimiento:\n${message}\n\n---\nTransmisión corporativa directa desde Santa Fe, CDMX.`;
 
   const mailtoUrl = `mailto:cerkvega@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
@@ -191,6 +194,7 @@ async function handleContactSubmit(e) {
         _subject: subject,
         nombre: name,
         empresa_institucion: org || 'No especificada',
+        telefono: fullPhone,
         division_interes: division,
         mensaje: message
       })
@@ -215,7 +219,7 @@ async function handleContactSubmit(e) {
         <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-sm">
           <strong>Mensaje Preparado y Transmitido a cerkvega@gmail.com</strong><br>
           Estimado(a) <strong>${name}</strong> (${org || 'Sector Corporativo'}), se ha canalizado tu requerimiento para la división <strong>${division}</strong> hacia la Dirección General.<br>
-          <span class="text-xs text-emerald-700 font-mono-clean mt-1 block">Folio de seguimiento: ${folio} · Destinatario: cerkvega@gmail.com</span>
+          <span class="text-xs text-emerald-700 font-mono-clean mt-1 block">Teléfono registrado: ${fullPhone} · Folio de seguimiento: ${folio}</span>
         </div>
       `;
       alertBox.classList.remove('hidden');
